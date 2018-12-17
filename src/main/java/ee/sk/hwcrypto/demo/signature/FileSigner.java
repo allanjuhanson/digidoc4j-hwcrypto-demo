@@ -44,22 +44,20 @@ public class FileSigner {
     private Configuration configuration = new Configuration(Configuration.Mode.PROD);
 
     public Container createContainer(DataFile dataFile) {
-        Container container = ContainerBuilder.
-                aContainer().
-                withDataFile(dataFile).
-                withConfiguration(configuration).
-                build();
-        return container;
+        return ContainerBuilder
+                .aContainer()
+                .withDataFile(dataFile)
+                .withConfiguration(configuration)
+                .build();
     }
 
     public DataToSign getDataToSign(Container containerToSign, String certificateInHex) {
         X509Certificate certificate = getCertificate(certificateInHex);
-        DataToSign dataToSign = SignatureBuilder.
-                aSignature(containerToSign).
-                withSigningCertificate(certificate).
-                withSignatureDigestAlgorithm(DIGEST_ALGORITHM).
-                buildDataToSign();
-        return dataToSign;
+        return SignatureBuilder
+                .aSignature(containerToSign)
+                .withSigningCertificate(certificate)
+                .withSignatureDigestAlgorithm(DIGEST_ALGORITHM)
+                .buildDataToSign();
     }
 
     public void signContainer(Container container, DataToSign dataToSign, String signatureInHex) {
@@ -76,8 +74,7 @@ public class FileSigner {
         byte[] certificateBytes = DatatypeConverter.parseHexBinary(certificateInHex);
         try (InputStream inStream = new ByteArrayInputStream(certificateBytes)) {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            X509Certificate certificate = (X509Certificate)cf.generateCertificate(inStream);
-            return certificate;
+            return (X509Certificate)cf.generateCertificate(inStream);
         } catch (CertificateException | IOException e) {
             log.error("Error reading certificate: " + e.getMessage());
             throw new RuntimeException(e);

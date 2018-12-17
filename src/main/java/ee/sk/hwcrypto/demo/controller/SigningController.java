@@ -27,15 +27,14 @@ import ee.sk.hwcrypto.demo.model.Digest;
 import ee.sk.hwcrypto.demo.model.Result;
 import ee.sk.hwcrypto.demo.model.SigningSessionData;
 import ee.sk.hwcrypto.demo.signature.FileSigner;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.digidoc4j.Container;
 import org.digidoc4j.DataFile;
 import org.digidoc4j.DataToSign;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,7 +51,7 @@ public class SigningController {
     @Autowired
     private FileSigner signer;
 
-    @RequestMapping(value="/upload", method= RequestMethod.POST)
+    @PostMapping(value="/upload")
     public Result handleUpload(@RequestParam MultipartFile file) {
         log.debug("Handling file upload for file "+file.getOriginalFilename());
         try {
@@ -69,7 +68,7 @@ public class SigningController {
         return Result.resultUploadingError();
     }
 
-    @RequestMapping(value="/generateHash", method = RequestMethod.POST)
+    @PostMapping(value="/generateHash")
     public Digest generateHash(@RequestParam String certInHex) {
         log.debug("Generating hash from cert " + StringUtils.left(certInHex, 10) + "...");
         Container container = session.getContainer();
@@ -77,7 +76,7 @@ public class SigningController {
         try {
             DataToSign dataToSign = signer.getDataToSign(container, certInHex);
             session.setDataToSign(dataToSign);
-            String dataToSignInHex = DatatypeConverter.printHexBinary(dataToSign.getDigestToSign());
+            String dataToSignInHex = DatatypeConverter.printHexBinary(dataToSign.getDataToSign());
             digest.setHex(dataToSignInHex);
             digest.setResult(Result.OK);
         } catch (Exception e) {
@@ -87,7 +86,7 @@ public class SigningController {
         return digest;
     }
 
-    @RequestMapping(value="/createContainer", method = RequestMethod.POST)
+    @PostMapping(value="/createContainer")
     public Result createContainer(@RequestParam String signatureInHex) {
         log.debug("Creating container for signature " + StringUtils.left(signatureInHex, 10) + "...");
         DataToSign dataToSign = session.getDataToSign();

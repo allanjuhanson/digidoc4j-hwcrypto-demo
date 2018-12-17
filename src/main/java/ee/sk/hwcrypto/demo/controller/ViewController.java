@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.ServletOutputStream;
@@ -42,10 +43,11 @@ public class ViewController {
 
     private static final Logger log = LoggerFactory.getLogger(ViewController.class);
     public static final String CONTAINER_MIME_TYPE = "application/vnd.etsi.asic-e+zip";
+
     @Autowired
     private SigningSessionData session;
 
-    @RequestMapping("")
+    @GetMapping("")
     public String view() {
         return "view";
     }

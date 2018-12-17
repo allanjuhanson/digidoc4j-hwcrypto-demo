@@ -55,7 +55,7 @@ public class FileSignerTest {
         DataFile file = createFile("test.txt", "Test data to sign");
         Container container = fileSigner.createContainer(file);
         DataToSign dataToSign = fileSigner.getDataToSign(container, certificateInHex);
-        assertTrue(dataToSign.getDigestToSign().length > 0);
+        assertTrue(dataToSign.getDataToSign().length > 0);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class FileSignerTest {
         DataFile file = createFile("test.txt", "Test data to sign");
         Container container = fileSigner.createContainer(file);
         DataToSign dataToSign = fileSigner.getDataToSign(container, certificateInHex);
-        byte[] digestToSign = dataToSign.getDigestToSign();
+        byte[] digestToSign = dataToSign.getDataToSign();
         String signatureInHex = TestSigningData.signDigest(digestToSign, DigestAlgorithm.SHA256);
         fileSigner.signContainer(container, dataToSign, signatureInHex);
         assertEquals(1, container.getSignatures().size());
